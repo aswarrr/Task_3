@@ -25,10 +25,26 @@ export default function AllPerks() {
 
  /*
  TODO: HOOKS TO IMPLEMENT
- * useEffect Hook #1: Initial Data Loading
+ * useEffect Hook #1: Initial Data Loading 
  * useEffect Hook #2: Auto-search on Input Change
 
 */
+
+useEffect(() => {
+  loadAllPerks();
+}, []);
+
+// 2) HOOK #2: Auto-search on Input Change (debounced)
+useEffect(() => {
+  const t = setTimeout(() => {
+    // Only auto-fetch if user isn’t currently loading (optional)
+    loadAllPerks();
+  }, 400); // debounce ~400ms
+
+  return () => clearTimeout(t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [searchQuery, merchantFilter]);
+
 
   
   useEffect(() => {
@@ -136,6 +152,7 @@ export default function AllPerks() {
                 type="text"
                 className="input"
                 placeholder="Enter perk name..."
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 
               />
               <p className="text-xs text-zinc-500 mt-1">
@@ -149,18 +166,19 @@ export default function AllPerks() {
                 <span className="material-symbols-outlined text-sm align-middle">store</span>
                 {' '}Filter by Merchant
               </label>
-              <select
-                className="input"
-                
-              >
-                <option value="">All Merchants</option>
-                
-                {uniqueMerchants.map(merchant => (
-                  <option key={merchant} value={merchant}>
-                    {merchant}
-                  </option>
-                ))}
-              </select>
+        <select
+  className="input"
+  value={merchantFilter}
+  onChange={(e) => setMerchantFilter(e.target.value)}
+  disabled={uniqueMerchants.length === 0}
+>
+  <option value="">All Merchants</option>
+  {uniqueMerchants.map((merchant) => (
+    <option key={merchant} value={merchant}>
+      {merchant}
+    </option>
+  ))}
+</select>
             </div>
           </div>
 
